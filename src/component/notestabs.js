@@ -5,7 +5,7 @@ export default function Notestabs() {
   return (
     <div>
       <div className="max-w-4xl pl-8 pt-6">
-        {/* Note Header */}
+
         <div className="mb-4">
           <div className="flex items-center  ">
             <span className="text-sm font-medium text-gray-600 uppercase tracking-wide">FREE TEXT</span>
@@ -26,7 +26,7 @@ export default function Notestabs() {
         <div className="relative group">
           <textarea
             placeholder="Enter your text..."
-            className="w-full h-10 p-2 border font-aeonik border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 placeholder-gray-400 overflow-hidden"
+            className="w-full h-10 p-2 border font-aeonik border-gray-300 hover:border-black rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 placeholder-gray-400 overflow-hidden"
             style={{ fontSize: '14px', lineHeight: '1.5' }}
           />
         </div>

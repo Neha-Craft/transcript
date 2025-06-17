@@ -3,10 +3,10 @@ import "./globals.css";
 import Home from "@/component/home"
 import localFont from 'next/font/local'
 
-const cursive = localFont({
-  src: '/font/sora-3/Sora-Bold.ttf',
-  variable: '--font-sora',
-})
+// const cursive = localFont({
+//   // src: '/font/sora-3/Sora-Bold.ttf',
+//   variable: '--font-sora',
+// })
 
 export const metadata = {
   title: "Nabla - Medical Assistant",
@@ -16,7 +16,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${cursive.variable} font-sora`}>
+      <body>
         <div className="flex h-screen">
           <Home/>
           <main className="flex-1 overflow-y-auto ">

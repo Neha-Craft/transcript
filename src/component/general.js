@@ -201,14 +201,6 @@ export default function GeneralTab() {
       
 
     
-        {/* <div className="mb-8">
-          <div className="mb-4">
-            <h3 className="text-base font-medium text-gray-900 mb-1">Patient naming</h3>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-              BETA
-            </span>
-          </div>
-        </div> */}
       </div>
 
     </div>

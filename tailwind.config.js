@@ -9,10 +9,12 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        soraLight: ["Sora-Light", "sans-serif"],
+      aeonik: ['Aeonik', 'sans-serif'],
+
       },
       colors: {
         primary: 'rgb(97 81 213)',
+        secondary:'rgb(239 238 251)',
          customPurple: "rgb(97 81 213)",
       },
       fontSize: {

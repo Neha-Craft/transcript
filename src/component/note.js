@@ -15,13 +15,13 @@ export default function NoteTab() {
   return (
     <div>
          <div className="flex">
-        {/* Main Content */}
+   
         <div className="flex-1 px-8 py-6">
-          {/* General template settings */}
+      
           <div className="mb-8">
             <h2 className="text-lg font-medium text-gray-900 mb-6">General template settings</h2>
             
-            {/* Note template */}
+
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">Note template</label>
               <div className="relative">
@@ -42,7 +42,7 @@ export default function NoteTab() {
               </div>
             </div>
 
-            {/* General custom instructions */}
+  
             <div className="mb-6">
               <div className="flex items-center justify-between">
                 <label className="block text-sm font-medium text-gray-700">General custom instructions</label>
@@ -56,15 +56,15 @@ export default function NoteTab() {
             </div>
           </div>
 
-          {/* Sections settings */}
+      
           <div className="mb-8">
             <h2 className="text-lg font-medium text-gray-900 mb-6">Sections settings</h2>
             
-            {/* SUBJECTIVE Section */}
+     
             <div className="mb-8 p-4 bg-gray-50 rounded-lg">
               <h3 className="text-sm font-medium text-gray-700 mb-4 uppercase tracking-wide">SUBJECTIVE</h3>
               
-              {/* Custom title */}
+         
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Custom title</label>
                 <input
@@ -74,7 +74,7 @@ export default function NoteTab() {
                 />
               </div>
 
-              {/* Split by problem */}
+      
               <div className="mb-4">
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-medium text-gray-700">Split by problem</label>
@@ -93,7 +93,7 @@ export default function NoteTab() {
                 </div>
               </div>
 
-              {/* Section style */}
+           
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Section style</label>
                 <div className="flex gap-2">
@@ -130,7 +130,7 @@ export default function NoteTab() {
                 </div>
               </div>
 
-              {/* Detail level */}
+        
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Detail level</label>
                 <div className="flex gap-2">
@@ -157,7 +157,7 @@ export default function NoteTab() {
                 </div>
               </div>
 
-              {/* Custom instructions */}
+        
               <div className="mb-4">
                 <div className="flex items-center justify-between">
                   <label className="block text-sm font-medium text-gray-700">Custom instructions</label>
@@ -244,7 +244,7 @@ export default function NoteTab() {
           </div>
         </div>
 
-        {/* Right Sidebar */}
+  
         <div className="w-80 border-l border-gray-200 bg-gray-50 p-6">
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
