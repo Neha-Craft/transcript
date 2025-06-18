@@ -13,9 +13,9 @@ module.exports = {
 
       },
       colors: {
-        primary: 'rgb(97 81 213)',
-        secondary:'rgb(239 238 251)',
-         customPurple: "rgb(97 81 213)",
+    primary: 'rgb(97 81 213)',
+    secondary: 'rgb(239 238 251)',
+    customPurple: 'rgb(97 81 213)',
       },
       fontSize: {
         xxl: "5rem",

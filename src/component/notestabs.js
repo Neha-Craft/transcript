@@ -1,14 +1,12 @@
 import React from 'react'
 import { Mic, Copy, Download, Share } from 'lucide-react'
-
 export default function Notestabs() {
   return (
     <div>
       <div className="max-w-4xl pl-8 pt-6">
-
         <div className="mb-4">
           <div className="flex items-center  ">
-            <span className="text-sm font-medium text-gray-600 uppercase tracking-wide">FREE TEXT</span>
+            <span className="text-sm font-medium text-gray-600 uppercase font-aeonik tracking-wide">FREE TEXT</span>
             <div className="flex items-center space-x-2 opacity-0 hover:opacity-100 transition-opacity duration-200">
               <button className="p-1 text-gray-500 hover:text-gray-700 transition-colors">
                 <Mic className="w-4 h-4" />

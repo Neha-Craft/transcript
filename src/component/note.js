@@ -19,11 +19,11 @@ export default function NoteTab() {
         <div className="flex-1 px-8 py-6">
       
           <div className="mb-8">
-            <h2 className="text-lg font-medium text-gray-900 mb-6">General template settings</h2>
+            <h2 className="text-lg font-medium font-aeonik text-gray-900 mb-6">General template settings</h2>
             
 
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Note template</label>
+              <label className="block text-sm font-aeonik font-medium text-gray-700 mb-2">Note template</label>
               <div className="relative">
                 <select
                   value={noteTemplate}
@@ -45,8 +45,8 @@ export default function NoteTab() {
   
             <div className="mb-6">
               <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-gray-700">General custom instructions</label>
-                <button className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700">
+                <label className="block text-sm font-medium text-gray-700 font-aeonik">General custom instructions</label>
+                <button className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-aeonik">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
@@ -58,15 +58,15 @@ export default function NoteTab() {
 
       
           <div className="mb-8">
-            <h2 className="text-lg font-medium text-gray-900 mb-6">Sections settings</h2>
+            <h2 className="text-lg font-medium font-aeonik text-gray-900 mb-6">Sections settings</h2>
             
      
             <div className="mb-8 p-4 bg-gray-50 rounded-lg">
-              <h3 className="text-sm font-medium text-gray-700 mb-4 uppercase tracking-wide">SUBJECTIVE</h3>
+              <h3 className="text-sm font-medium text-gray-700 mb-4 font-aeonik uppercase tracking-wide">SUBJECTIVE</h3>
               
          
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Custom title</label>
+                <label className="block text-sm font-medium font-aeonik text-gray-700 mb-2">Custom title</label>
                 <input
                   type="text"
                   placeholder="Subjective"
@@ -77,7 +77,7 @@ export default function NoteTab() {
       
               <div className="mb-4">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-gray-700">Split by problem</label>
+                  <label className="text-sm font-medium font-aeonik text-gray-700">Split by problem</label>
                   <button
                     onClick={() => setSplitByProblem(!splitByProblem)}
                     className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
@@ -95,11 +95,11 @@ export default function NoteTab() {
 
            
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Section style</label>
+                <label className="block text-sm font-medium text-gray-700 font-aeonik mb-2">Section style</label>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setSectionStyle('Auto')}
-                    className={`px-3 py-1 text-sm rounded-md border ${
+                    className={`px-3 py-1 font-aeonik text-sm rounded-md border ${
                       sectionStyle === 'Auto'
                         ? 'bg-blue-50 border-blue-200 text-blue-700'
                         : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
@@ -109,7 +109,7 @@ export default function NoteTab() {
                   </button>
                   <button
                     onClick={() => setSectionStyle('Bullet points')}
-                    className={`px-3 py-1 text-sm rounded-md border ${
+                    className={`px-3 font-aeonik py-1 text-sm rounded-md border ${
                       sectionStyle === 'Bullet points'
                         ? 'bg-blue-50 border-blue-200 text-blue-700'
                         : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
@@ -119,7 +119,7 @@ export default function NoteTab() {
                   </button>
                   <button
                     onClick={() => setSectionStyle('Paragraph')}
-                    className={`px-3 py-1 text-sm rounded-md border ${
+                    className={`px-3 py-1 text-sm font-aeonik rounded-md border ${
                       sectionStyle === 'Paragraph'
                         ? 'bg-blue-50 border-blue-200 text-blue-700'
                         : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
@@ -132,11 +132,11 @@ export default function NoteTab() {
 
         
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Detail level</label>
+                <label className="block text-sm font-medium font-aeonik text-gray-700 mb-2">Detail level</label>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setDetailLevel('Normal')}
-                    className={`px-3 py-1 text-sm rounded-md border ${
+                    className={`px-3 py-1 font-aeonik text-sm rounded-md border ${
                       detailLevel === 'Normal'
                         ? 'bg-blue-50 border-blue-200 text-blue-700'
                         : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
@@ -146,7 +146,7 @@ export default function NoteTab() {
                   </button>
                   <button
                     onClick={() => setDetailLevel('High')}
-                    className={`px-3 py-1 text-sm rounded-md border ${
+                    className={`px-3 py-1 font-aeonik text-sm rounded-md border ${
                       detailLevel === 'High'
                         ? 'bg-blue-50 border-blue-200 text-blue-700'
                         : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
@@ -160,7 +160,7 @@ export default function NoteTab() {
         
               <div className="mb-4">
                 <div className="flex items-center justify-between">
-                  <label className="block text-sm font-medium text-gray-700">Custom instructions</label>
+                  <label className="block text-sm font-medium text-gray-700 font-aeonik">Custom instructions</label>
                   <button className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -189,12 +189,8 @@ export default function NoteTab() {
                 </div>
               </div>
             </div>
-
-            {/* OBJECTIVE Section */}
             <div className="mb-8 p-4 bg-gray-50 rounded-lg">
-              <h3 className="text-sm font-medium font-aeonik text-gray-700 mb-4 uppercase tracking-wide">OBJECTIVE</h3>
-              
-              {/* Custom title */}
+              <h3 className="text-sm font-medium font-aeonik text-gray-700 mb-4 uppercase tracking-wide ">OBJECTIVE</h3>
               <div className="mb-4">
                 <label className="block text-sm font-medium font-aeonik text-gray-700 mb-2">Custom title</label>
                 <input
@@ -203,8 +199,6 @@ export default function NoteTab() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-
-              {/* Section style */}
               <div className="mb-4">
                 <label className="block text-sm font-medium font-aeonik text-gray-700 mb-2">Section style</label>
                 <div className="flex gap-2">
@@ -243,8 +237,6 @@ export default function NoteTab() {
             </div>
           </div>
         </div>
-
-  
         <div className="w-80 border-l border-gray-200 bg-gray-50 p-6">
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
@@ -264,7 +256,6 @@ export default function NoteTab() {
               </button>
             </div>
           </div>
-          
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium font-aeonik text-gray-700 uppercase tracking-wide">OBJECTIVE</h3>
@@ -283,7 +274,6 @@ export default function NoteTab() {
               </button>
             </div>
           </div>
-          
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium text-gray-700 uppercase tracking-wide font-aeonik">ASSESSMENT & PLAN</h3>

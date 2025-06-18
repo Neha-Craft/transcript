@@ -18,15 +18,10 @@ export default function Home() {
     },
   ])
   const [showStartDictate, setShowStartDictate] = useState(false)
-
   const handleNewEncounter = () => {
     const today = new Date().toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" })
-
-
     const todayIndex = encounters.findIndex((group) => group.date === today)
-
     if (todayIndex !== -1) {
-  
       const updatedEncounters = [...encounters]
       const newId = Math.max(...updatedEncounters[todayIndex].items.map((item) => item.id), 0) + 1
       updatedEncounters[todayIndex].items.push({ id: newId, status: "Not started", duration: 0 })
@@ -36,28 +31,23 @@ export default function Home() {
       setEncounters([{ date: today, items: [{ id: 1, status: "Not started", duration: 0 }] }, ...encounters])
     }
   }
-
   const toggleDropdown = (e) => {
     e.stopPropagation()
     setShowStartDictate(!showStartDictate)
   }
-
   const handleStartDictate = () => {
     console.log("Start dictated note clicked")
     setShowStartDictate(false)
  
   }
-
   const formatDate = (dateString) => {
     const date = new Date(dateString)
     return date.toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" })
   }
-
   const isToday = (dateString) => {
     const today = new Date().toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" })
     return dateString === today
   }
-
   return (
     <div className="w-full max-w-xs h-screen bg-white border-r border-gray-200 flex flex-col">
       <div className="p-4 border-b border-gray-200">
@@ -66,7 +56,6 @@ export default function Home() {
             Transcript
           </h1>
       </div>
-
       <div className="p-4">
         <div className="relative">
           <div className="w-full flex items-center justify-between px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md border border-gray-300">
@@ -123,9 +112,6 @@ export default function Home() {
           </div>
         ))}
       </div>
-
-   
-
       <div className="mt-auto border-t border-gray-200">
         <div className="p-2">
           <Link

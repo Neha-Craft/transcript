@@ -6,7 +6,6 @@ class AudioProcessor extends AudioWorkletProcessor {
     this.bufferIndex = 0;
     this.sampleCount = 0;
   }
-
   process(inputs) {
     try {
       const input = inputs[0];
@@ -14,7 +13,6 @@ class AudioProcessor extends AudioWorkletProcessor {
 
       const channelData = input[0];
       if (!channelData) return true;
-
       // Calculate RMS for audio level
       let sum = 0;
       for (let i = 0; i < channelData.length; i++) {
@@ -51,6 +49,5 @@ class AudioProcessor extends AudioWorkletProcessor {
     }
   }
 }
-
 registerProcessor("audio-processor", AudioProcessor);
 
