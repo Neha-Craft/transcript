@@ -36,6 +36,7 @@ export default function Encounter() {
   const audioBufferQueueRef = useRef([]);
   const sendIntervalRef = useRef(null);
   const animationFrameRef = useRef(null);
+  const transcriptHistoryRef = useRef("");
   const tabs = ["Transcript", "Note"];
   const SEND_INTERVAL_MS = 300;
   const MIN_SAMPLES_TO_SEND = Math.floor(16000 * 0.1);
@@ -73,7 +74,7 @@ export default function Encounter() {
     hasProcessor: !!processorRef.current
   };
   
-  console.log("🔍 Detailed state check:", stateCheck);
+
   if (!socket.connected) {
     console.log("❌ Socket not connected");
     return;
@@ -231,18 +232,18 @@ export default function Encounter() {
         setAudioLevel(level);
       }
       if (event.data.audio) {
-        console.log("📦 Queuing audio data, buffer size:", event.data.audio.byteLength);
+    
         audioBufferQueueRef.current.push(new Int16Array(event.data.audio));
       }
     };
     setIsRecording(true);
     setIsPaused(false);
     if (socket.connected) {
-      console.log("🚀 Starting transcription...");
+      // console.log("🚀 Starting transcription...");
       socket.emit("start_transcription");
     }
      else {
-      console.error("❌ Socket not connected, cannot start transcription");
+     
     }
     
 
@@ -259,7 +260,7 @@ const pauseRecording = () => {
   console.log("⏸️ Pause called - Current state:", { isRecording, isPaused });
   
   if (isRecording && !isPaused) {
-    console.log("⏸️ Executing pause...");
+
     
     // Save current transcript to history before pausing
     if (liveTranscript.trim()) {
@@ -295,25 +296,33 @@ const pauseRecording = () => {
   }
 };
 
+console.log("transhistory", transcriptHistory)
 
 useEffect(() => {
   socket.on("transcript", (data) => {
     console.log("Received transcript data:", data);
     if (data.segments && Array.isArray(data.segments)) {
-      
       setTranscriptSegments(data.segments);
       
       const currentText = data.segments
         .map(segment => segment.text)
         .filter(text => text)
         .join(' ');
-      const combinedTranscript = transcriptHistory ? 
-        `${transcriptHistory} ${currentText}` : currentText;
+      
+      // Use ref to get current history without causing re-renders
+      const combinedTranscript = transcriptHistoryRef.current ? 
+        `${transcriptHistoryRef.current} ${currentText}` : currentText;
       
       setLiveTranscript(combinedTranscript);
       setTranscript(combinedTranscript);
       
+      // Update the state for display purposes
+      setTranscriptHistory(combinedTranscript);
+      
+      // Only update ref history if it's final
       if (data.is_final && currentText.trim()) {
+        transcriptHistoryRef.current = combinedTranscript;
+        
         setPatientContext(prev => {
           const newText = currentText.trim();
           if (newText && !prev.includes(newText)) {
@@ -334,7 +343,54 @@ useEffect(() => {
     socket.off("transcript");
     socket.off("error");
   };
-}, [transcriptHistory]);
+}, []); // Empty dependency array - no infinite loop!
+
+// useEffect(() => {
+//   socket.on("transcript", (data) => {
+//     console.log("Received transcript data:", data);
+//     if (data.segments && Array.isArray(data.segments)) {
+      
+//       setTranscriptSegments(data.segments);
+      
+//       const currentText = data.segments
+//         .map(segment => segment.text)
+//         .filter(text => text)
+//         .join(' ');
+//       const combinedTranscript = transcriptHistory ? 
+//         `${transcriptHistory} ${currentText}` : currentText;
+      
+//        setLiveTranscript(combinedTranscript);
+//        setTranscript(combinedTranscript);
+//        setTranscriptHistory(combinedTranscript)
+//        console.log("combined", combinedTranscript)
+  
+      
+//       if (data.is_final && currentText.trim()) {
+//         setPatientContext(prev => {
+//           const newText = currentText.trim();
+//           if (newText && !prev.includes(newText)) {
+//             return prev ? `${prev}\n\n${newText}` : newText;
+//           }
+//           return prev;
+//         });
+//       }
+//     }
+//   });
+
+//   socket.on("error", (data) => {
+//     console.error("Server error:", data.message);
+//     alert("Transcription error: " + data.message);
+//   });
+
+//   return () => {
+//     socket.off("transcript");
+//     socket.off("error");
+//   };
+// }, []);
+
+console.log("live",liveTranscript)
+console.log("trans",transcript)
+console.log("patieny",patientContext)
 const resumeRecording = async () => {
   console.log("🔄 Resume called - Current state:", { isRecording, isPaused });
   
@@ -360,7 +416,7 @@ const resumeRecording = async () => {
         }
       });
       streamRef.current = stream;
-      console.log("🎤 New stream obtained:", stream);
+      // console.log("🎤 New stream obtained:", stream);
 
       audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)({ 
         sampleRate: 16000 
@@ -425,89 +481,7 @@ const resumeRecording = async () => {
 
 
 
-//   console.log("🔄 Resume called - Current state:", { isRecording, isPaused });
-  
-//   if (isPaused && isRecording) {
-//     try {
-//       console.log("🔄 Starting resume process...");
-      
 
-//       const stream = await navigator.mediaDevices.getUserMedia({
-//         audio: { 
-//           sampleRate: 16000, 
-//           channelCount: 1, 
-//           echoCancellation: true, 
-//           noiseSuppression: true 
-//         }
-//       });
-//       streamRef.current = stream;
-//       console.log("🎤 New stream obtained:", stream);
-
-
-//       audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)({ 
-//         sampleRate: 16000 
-//       });
-//       console.log("🔊 Audio context created:", audioContextRef.current.state);
-      
-//       await audioContextRef.current.audioWorklet.addModule('/audio-processor.js');
-//       console.log("🔧 Audio worklet loaded");
-      
-//       mediaStreamSourceRef.current = audioContextRef.current.createMediaStreamSource(stream);
-//       processorRef.current = new AudioWorkletNode(audioContextRef.current, 'audio-processor');
-      
-//       mediaStreamSourceRef.current.connect(processorRef.current);
-//       processorRef.current.connect(audioContextRef.current.destination);
-//       console.log("🔗 Audio chain connected");
-      
-//       processorRef.current.port.onmessage = (event) => {
-//         console.log("🎵 Worklet message received:", event.data);
-        
-    
-//         const hasStream = !!streamRef.current;
-//         const hasContext = !!audioContextRef.current && audioContextRef.current.state !== 'closed';
-        
-//         if (!hasStream || !hasContext) {
-//           console.log("❌ No stream or context available");
-//           return;
-//         }
-        
-//         if (event.data.rms !== undefined) {
-//           const level = Math.min(255, Math.floor(event.data.rms * 300));
-//           setAudioLevel(level);
-//         }
-        
-//         if (event.data.audio) {
-//           console.log("📦 Adding audio to buffer, current queue length:", audioBufferQueueRef.current.length);
-//           audioBufferQueueRef.current.push(new Int16Array(event.data.audio));
-//         }
-//       };
-
-     
-//       setIsPaused(false);
-//       console.log("✅ Set isPaused to false");
-      
-
-      
-//       if (socket.connected) {
-//         socket.emit("start_transcription");
-//         console.log("🚀 Restarted transcription");
-//       }
-      
-
-//       sendIntervalRef.current = setInterval(sendAudioData, SEND_INTERVAL_MS);
-//       console.log("⏰ Resume interval started");
-      
-//       setShowButton(false);
-//       console.log("✅ Resume completed successfully");
-      
-//     } catch (err) {
-//       console.error("❌ Resume mic error:", err);
-//       setIsPaused(true);
-//     }
-//   } else {
-//     console.log("❌ Cannot resume - isPaused:", isPaused, "isRecording:", isRecording);
-//   }
-// };
   const stopRecording = () => {
     if (!isRecording) return;
     setIsRecording(false);
@@ -545,162 +519,6 @@ const resumeRecording = async () => {
     return () => stopMicrophoneTest();
   }, []);
 
-  useEffect(() => {
-  socket.on("transcript", (data) => {
-    console.log("Received transcript data:", data);
-    if (data.segments && Array.isArray(data.segments)) {
-      
-  
-      setTranscriptSegments(data.segments);
-      
-  
-      const fullText = data.segments
-        .map(segment => segment.text)
-        .filter(text => text)
-        .join(' ');
-      
-      setLiveTranscript(fullText);
-      
-
-      if (data.is_final && fullText.trim()) {
-        setPatientContext(prev => {
-          const newText = fullText.trim();
-          // Only add if it's truly new content
-          if (newText && !prev.includes(newText)) {
-            return prev ? `${prev}\n\n${newText}` : newText;
-          }
-          return prev;
-        });
-      }
-      
-      // Set the main transcript display
-      setTranscript(fullText);
-    }
-  });
-
-  socket.on("error", (data) => {
-    console.error("Server error:", data.message);
-    alert("Transcription error: " + data.message);
-  });
-
-  return () => {
-    socket.off("transcript");
-    socket.off("error");
-  };
-}, []); 
-
-//   socket.on("transcript", (data) => {
-//     console.log("Received transcript data:", data);
-//     if (data.segments && Array.isArray(data.segments)) {
-      
-//       // For resumed sessions, append new segments to existing ones
-//       setTranscriptSegments(prevSegments => {
-//         // Check if this is new data or continuation
-//         const newSegments = [...prevSegments, ...data.segments];
-//         return newSegments;
-//       });
-      
-//       // Update live transcript - combine existing and new
-//       setLiveTranscript(prevLive => {
-//         const newText = data.segments
-//           .map(segment => segment.text)
-//           .filter(text => text)
-//           .join(' ');
-        
-//         // If we're resuming and have previous text, append new text
-//         if (prevLive && newText && !prevLive.includes(newText)) {
-//           return `${prevLive} ${newText}`;
-//         } else if (!prevLive && newText) {
-//           return newText;
-//         }
-//         return prevLive;
-//       });
-      
-//       // Handle final transcript updates
-//       if (data.is_final) {
-//         const fullText = data.segments
-//           .map(segment => segment.text)
-//           .filter(text => text)
-//           .join(' ');
-          
-//         if (fullText.trim()) {
-//           setPatientContext(prev => {
-//             const newText = fullText.trim();
-//             // Only add if it's truly new content
-//             if (newText && !prev.includes(newText)) {
-//               return prev ? `${prev}\n\n${newText}` : newText;
-//             }
-//             return prev;
-//           });
-//         }
-//       }
-      
-//       // Update the main transcript display
-//       setTranscript(prevTranscript => {
-//         const allSegments = transcriptSegments.length > 0 ? 
-//           [...transcriptSegments, ...data.segments] : 
-//           data.segments;
-        
-//         return allSegments
-//           .map(segment => segment.text)
-//           .filter(text => text)
-//           .join(' ');
-//       });
-//     }
-//   });
-
-//   socket.on("error", (data) => {
-//     console.error("Server error:", data.message);
-//     alert("Transcription error: " + data.message);
-//   });
-
-//   return () => {
-//     socket.off("transcript");
-//     socket.off("error");
-//   };
-// }, [transcriptSegments]); // Add transcriptSegments as dependency
-
- 
-  // useEffect(() => {
-  //   socket.on("transcript", (data) => {
-  //     console.log("Received transcript data:", data);
-  //     if (data.segments && Array.isArray(data.segments)) {
-  //       setTranscriptSegments(data.segments);
-        
-  //       // Update live transcript for real-time display
-  //       const fullText = data.segments
-  //         .map(segment => segment.text)
-  //         .filter(text => text)
-  //         .join(' ');
-  //       setLiveTranscript(fullText);
-        
-    
-  //       if (data.is_final && fullText.trim()) {
-  //         setPatientContext(prev => {
-  //           const newText = fullText.trim();
-     
-  //           if (newText && !prev.includes(newText)) {
-  //             return prev ? `${prev}\n\n${newText}` : newText;
-  //           }
-  //           return prev;
-  //         });
-  //       }
-        
-
-  //       setTranscript(fullText);
-  //     }
-  //   });
-
-  //   socket.on("error", (data) => {
-  //     console.error("Server error:", data.message);
-  //     alert("Transcription error: " + data.message);
-  //   });
-
-  //   return () => {
-  //     socket.off("transcript");
-  //     socket.off("error");
-  //   };
-  // }, []);
 
 
   useEffect(() => {
@@ -849,14 +667,14 @@ const resumeRecording = async () => {
             </label>
             
             {/* Show live transcript above the textarea when recording */}
-            {isRecording && liveTranscript && (
+            {isRecording && transcriptHistory && (
               <div className="mb-4 p-3rounded-md">
                 <label className="text-xs font-semibold text-blue-600 mb-1 block font-aeonik">
               
                 </label>
                 <div className="text-sm  font-aeonik">
 
-                  {liveTranscript}
+                  {transcriptHistory}
                 </div>
               </div>
             )}
