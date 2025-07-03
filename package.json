@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@google-cloud/speech": "^7.1.0",
+    "@react-pdf/renderer": "^4.3.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "lightningcss": "^1.30.1",

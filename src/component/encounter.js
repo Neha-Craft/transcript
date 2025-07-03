@@ -1,10 +1,12 @@
 
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { Mic, Plus } from "lucide-react";
+import { Mic, Plus,User,Trash2} from "lucide-react";
 import { io } from "socket.io-client";
 import Notestabs from "@/component/notestabs";
 import { ChevronDown } from "lucide-react"
+import DateTimeCalendar from "./calender";
+import MicrophoneRecorder from "./microphone";
 const socket = io("https://whisper.craftandcode.in/", {
   transports: ["websocket", "polling"],
   withCredentials: true,
@@ -26,6 +28,13 @@ export default function Encounter() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [transcriptSegments, setTranscriptSegments] = useState([]);
   const [transcriptHistory, setTranscriptHistory] = useState("");
+  const [showEncounterFile,setShowEncounterFile]=useState(false)
+   const [isEditing, setIsEditing] = useState(false);
+   const [headingText, setHeadingText] = useState("Transcript");
+    const [isEditingTitle, setIsEditingTitle] = useState(false)
+  const [title, setTitle] = useState("Add patient details")
+  const defaultTitle = "Add patient details"
+
   const audioContextRef = useRef(null);
   const streamRef = useRef(null);
   const testStreamRef = useRef(null);
@@ -59,6 +68,26 @@ export default function Encounter() {
       binary += String.fromCharCode(bytes[i]);
     }
     return btoa(binary);
+  };
+   const handleBlur = () => {
+    setIsEditing(false);
+  };
+   const handleTitleChange = (e) => {
+    setTitle(e.target.value)
+  }
+
+  const handleTitleBlur = () => {
+    if (title.trim() === "") {
+      setTitle(defaultTitle)
+    }
+    setIsEditingTitle(false)
+  }
+
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      setIsEditing(false);
+    }
   };
   const sendAudioData = () => {
   console.log("📡 sendAudioData called");
@@ -442,15 +471,211 @@ const resumeRecording = async () => {
     };
   }, [isRecording]);
 
+  console.log("show",showFolder)
+
   return (
     <div className="flex-1 bg-white min-h-screen">
-      <div 
-        className={showMainFolder === "true" ? "bg-secondary" : "bg-white"}>
-        <div className="px-8 py-6 border-b border-gray-200">
+       { !showFolder && (
+         <div className="px-8 py-6 border-b border-gray-200">
           <h1 className="text-2xl font-aeonik text-gray-900 font-bold">
             Encounter
           </h1>
         </div>
+
+      )} 
+       <div>
+      {activeTab === "Transcript" && showMainFolder && (
+        <div >
+        <div className="px-8 py-4 border-b border-gray-200">
+          <div >
+          <div>
+            <div className="flex items-center  ">           
+     <div className="flex items-center space-x-2 pl-[5px]">  
+      <div>           
+       <User className="w-4 h-4 text-gray-600" /> 
+       </div>  
+       <div>          
+       {isEditingTitle ? (               
+         <input                 
+           type="text"                 
+           value={title}                 
+           onChange={handleTitleChange}                 
+           onBlur={handleTitleBlur}                 
+           onKeyDown={(e) => {                   
+             if (e.key === "Enter") {                     
+               if (title.trim() === "") {                       
+                 setTitle(defaultTitle)                     
+               }                     
+               setIsEditingTitle(false)                   
+             }                   
+             if (e.key === "Escape") {                     
+               setTitle(title || defaultTitle)                     
+               setIsEditingTitle(false)                   
+             }                 
+           }}                 
+           placeholder="Add patient details"                 
+           className="text-[14px] font-aeonik  text-gray-700 bg-transparent border-none focus:outline-none min-w-0 w-[300px]"                 
+           autoFocus               
+         />             
+       ) : (               
+         <p                 
+           className="text-[18px] font-extrabold font-aeonik text-gray-700 cursor-pointer hover:text-gray-900 transition-colors"                 
+           onClick={() => setIsEditingTitle(true)}               
+         >                 
+           {title || defaultTitle}               
+         </p>             
+       )}           
+     </div>   
+     </div>   
+     <div>     
+     <button className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors pt-[13px]">             
+       <Trash2 className="w-4 h-4" />           
+     </button>         
+     </div>
+   </div>
+             {/* <div className="flex items-center  ">
+          <div className="flex items-center space-x-2 pl-[5px]">
+            <User className="w-8 h-8 text-gray-600" />
+            {isEditingTitle ? (
+              <input
+                type="text"
+                value={title}
+                onChange={handleTitleChange}
+                onBlur={handleTitleBlur}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    if (title.trim() === "") {
+                      setTitle(defaultTitle)
+                    }
+                    setIsEditingTitle(false)
+                  }
+                  if (e.key === "Escape") {
+                    setTitle(title || defaultTitle)
+                    setIsEditingTitle(false)
+                  }
+                }}
+                placeholder="Add patient details"
+                className="text-2xl font-aeonik  text-gray-700 bg-transparent border-none focus:outline-none min-w-0 w-[300px]"
+                autoFocus
+              />
+            ) : (
+              <p
+                className="text-2xl font-extrabold font-aeonik text-gray-700 cursor-pointer hover:text-gray-900 transition-colors"
+                onClick={() => setIsEditingTitle(true)}
+              >
+                {title || defaultTitle}
+              </p>
+            )}
+          </div>
+          <button className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors pt-[14px]">
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+             */}
+            
+        
+        
+           
+        
+          <div className="flex justify-between pt-2">
+            <div>
+          {activeTab === "Transcript" && showMainFolder && <DateTimeCalendar />}
+          </div>
+            <div>
+          <MicrophoneRecorder isRecording={isRecording}/>
+          </div>
+          </div>
+        </div>
+      
+        </div>
+        </div>
+        </div>
+      )}
+    </div>
+
+      
+     
+         
+
+{/*       
+      {activeTab === "Transcript" && showMainFolder && (
+  <div className="px-8 py-6 border-b border-gray-200">
+    {isEditing ? (
+      <input
+        type="text"
+        className="text-2xl font-bold text-gray-900 outline-none border-b border-gray-300 bg-transparent"
+        value={headingText}
+        autoFocus
+        onChange={(e) => setHeadingText(e.target.value)}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+      />
+    ) : (
+      <div className="flex items-center gap-2 group">
+        <h1
+          className="text-2xl font-bold text-gray-900 cursor-pointer"
+          onClick={() => setIsEditing(true)}
+        >
+          {headingText}
+        </h1>
+        <button
+          onClick={() => setIsEditing(true)}
+          className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-gray-100 rounded"
+        >
+          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        </button>
+      </div>
+    )}
+     {activeTab === "Transcript" && showMainFolder && (
+<DateTimeCalendar/>
+  )}
+  </div>
+)} */}
+ 
+   
+
+      {/* {activeTab === "Transcript" && showMainFolder && (
+      <div className="px-8 py-6 border-b border-gray-200">
+        {isEditing ? (
+          <input
+            type="text"
+            className="text-2xl font-aeonik text-gray-900 font-bold outline-none border-b border-gray-300"
+            value={headingText}
+            autoFocus
+            onChange={(e) => setHeadingText(e.target.value)}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+          />
+        ) : (
+          <h1
+            className="text-2xl font-aeonik text-gray-900 font-bold cursor-pointer"
+            onClick={() => setIsEditing(true)}
+          >
+            {headingText}
+          </h1>
+        )}
+      </div>
+    )
+  }
+   */}
+
+    
+         
+        
+    
+        {/* {activeTab === "Transcript"  && showMainFolder &&  (
+           <div className="px-8 py-6 border-b border-gray-200">
+          <h1 className="text-2xl font-aeonik text-gray-900 font-bold">
+            hello
+          </h1>
+        </div>
+        
+      )} */}
+      <div 
+        className={showMainFolder === "true" ? "bg-secondary" : "bg-white"}>
+     
  <div className="px-8 border-b border-gray-200">
           <nav className="flex space-x-8">
             {tabs.map((tab) => (
@@ -473,6 +698,7 @@ const resumeRecording = async () => {
           </nav>
         </div>
       </div>
+
       {activeTab === "Transcript"  && !showMainFolder && (
         <div className="flex flex-col items-center justify-center px-8 py-16">
           <div className="mb-12">
@@ -573,7 +799,11 @@ const resumeRecording = async () => {
               } else {
                 startRecording();
               }
-              setShowMainFolder(true);
+              setShowMainFolder(true);{
+                setShowEncounterFile(false)
+              }
+              setShowFolder(true)
+
             }}
             className="bg-[rgb(97,81,213)] hover:bg-primary cursor-pointer text-white font-medium py-3 px-8 rounded-lg transition-colors duration-200 flex items-center w-[431px] justify-center"
           >

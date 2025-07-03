@@ -3,6 +3,13 @@
 import { useState } from "react"
 import Link from "next/link"
 import { ChevronDown, Mic, Settings, HelpCircle, Zap, Mail, Trash2 } from "lucide-react"
+import { FileText } from "lucide-react";
+import dynamic from "next/dynamic";
+import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
+import PDFDocument from "@/component/pdfdocument";
+import MainButton from "./encounterButton";
+import DateEncounter from "./dateEncounter";
+
 
 export default function Home() {
   const [encounters, setEncounters] = useState([
@@ -17,6 +24,8 @@ export default function Home() {
       ],
     },
   ])
+  const [showPDF, setShowPDF] = useState(false)
+
   const [showStartDictate, setShowStartDictate] = useState(false)
   const handleNewEncounter = () => {
     const today = new Date().toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" })
@@ -52,87 +61,57 @@ export default function Home() {
     <div className="w-full max-w-xs h-screen bg-white border-r border-gray-200 flex flex-col">
       <div className="p-4 border-b border-gray-200">
    
-         <h1 className="text-2xl font-aeonik text-gray-900 font-bold">
+         <p className="text-[27px] font-aeonik text-gray-900 font-extrabold">
             Transcript
-          </h1>
+          </p>
       </div>
-      <div className="p-4">
-        <div className="relative">
-          <div className="w-full flex items-center justify-between px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md border border-gray-300">
-       
-            <button className="flex items-center gap-2 flex-1" onClick={handleNewEncounter}>
-              <span className="text-lg">+</span>
-              <span className="font-aeonik">New encounter</span>
-            </button>
-
-    
-            <button className="p-1 hover:bg-gray-200 rounded" onClick={toggleDropdown}>
-              <ChevronDown className={`w-4 h-4 transition-transform ${showStartDictate ? "rotate-180" : ""}`} />
-            </button>
-          </div>
-
-          {showStartDictate && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-10">
-              <button
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
-                onClick={handleStartDictate}
-              >
-                <Mic className="w-4 h-4" />
-                <span className="font-aeonik">Start dictated note</span>
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-y-auto">
-        {encounters.map((group, groupIndex) => (
-          <div key={groupIndex} className="mb-4">
-            <div className="px-4 pb-2">
-              <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide font-aeonik">
-                {isToday(group.date) ? "TODAY" : formatDate(group.date)}
-              </h3>
-            </div>
-
-            {group.items.map((item) => (
-              <div key={item.id} className="px-4 mb-1">
-                <div className="flex items-center justify-between p-2 hover:bg-gray-100 rounded-md group">
-                  <div>
-                    <div className="text-sm text-gray-900 font-aeonik cursor-pointer">Encounter</div>
-                    <div className="text-xs text-gray-500">
-                      {item.status} • {item.duration} min
-                    </div>
-                  </div>
-                  <button className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-200 rounded">
-                    <Trash2 className="w-4 h-4 text-gray-400" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
+      <MainButton/>
+      <DateEncounter encounters={encounters} isToday={isToday} formatDate={formatDate}/>
+     
       <div className="mt-auto border-t border-gray-200">
         <div className="p-2">
           <Link
+  href="/settings"
+  className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md font-aeonik cursor-pointer"
+>
+  <Settings className="w-4 h-4 text-black " />
+  <p className="text-[14px] text-black font-bold font-aeonik">Settings</p>
+</Link>
+
+          {/* <Link
             href="/settings"
             className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md font-aeonik cursor-pointer"
           >
             <Settings className="w-4 h-4 font-aeonik" />
-            Settings
+            <p className="font-aeonik text-[14px] text-black font-[700]">Settings</p>
+           
+          </Link> */}
+          <button className="w-full flex items-center font-aeonik gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
+            <HelpCircle className="w-4 h-4 text-black " />
+           
+              <p className="text-[14px] text-black font-bold font-aeonik"> Help</p>
+          </button>
+          <button className="w-full flex items-center font-aeonik gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
+            <Zap className="w-4 h-4 text-black " />
+             <p className="text-[14px] text-black font-bold font-aeonik">   What's new!
+
+             </p>
+          
+          </button>
+          <button className="w-full flex items-center font-aeonik gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
+            <Mail className="w-4 h-4 text-black" />
+                   <p className="text-[14px] text-black font-bold font-aeonik">Contact us </p>
+           
+          </button>
+       
+            <Link
+            href="/pdfencounter"
+            className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md font-aeonik cursor-pointer"
+          >
+           <FileText className="w-4 h-4 font-aeonik text-black" />
+               <p className="text-[14px] text-black font-bold font-aeonik"> PDF Preview </p>
+           
           </Link>
-          <button className="w-full flex items-center font-aeonik gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
-            <HelpCircle className="w-4 h-4" />
-            Help
-          </button>
-          <button className="w-full flex items-center font-aeonik gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
-            <Zap className="w-4 h-4" />
-            What's new!
-          </button>
-          <button className="w-full flex items-center font-aeonik gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
-            <Mail className="w-4 h-4" />
-            Contact us
-          </button>
         </div>
       </div>
     </div>
