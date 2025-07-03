@@ -1,12 +1,7 @@
 import React from "react";
 import {
   ChevronDown,
-  Mic,
-  Settings,
-  HelpCircle,
-  Zap,
-  Mail,
-  Trash2,
+
 } from "lucide-react";
 
 export default function EncounterButton() {
