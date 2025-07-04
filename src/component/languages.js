@@ -69,7 +69,7 @@ export default function LanguageComponent() {
                           Used for transcripts, dictations and uploaded recordings.
                         </p>
 
-                        <div className="relative">
+                        <div className="relative"  onMouseLeave={() => setShowLanguageDropdown(false)}>
                           <button
                             onClick={() => setShowInputDropdown(!showInputDropdown)}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-900 text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-blue-500"

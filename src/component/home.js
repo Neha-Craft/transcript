@@ -58,7 +58,7 @@ export default function Home() {
     return dateString === today
   }
   return (
-    <div className="w-full max-w-xs h-screen bg-white border-r border-gray-200 flex flex-col">
+    <div className="w-[20%] h-screen bg-white border-r border-gray-200 flex flex-col">
       <div className="p-4 border-b border-gray-200">
    
          <p className="text-[27px] font-aeonik text-gray-900 font-extrabold">

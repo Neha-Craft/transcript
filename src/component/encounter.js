@@ -1,12 +1,13 @@
 
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { Mic, Plus,User,Trash2} from "lucide-react";
+import { Mic, Plus,User,Trash2,Copy, Check, AudioWaveform, FileText, StickyNote, X} from "lucide-react";
 import { io } from "socket.io-client";
 import Notestabs from "@/component/notestabs";
 import { ChevronDown } from "lucide-react"
 import DateTimeCalendar from "./calender";
 import MicrophoneRecorder from "./microphone";
+import Contexttab from "./contexttab";
 const socket = io("https://whisper.craftandcode.in/", {
   transports: ["websocket", "polling"],
   withCredentials: true,
@@ -32,6 +33,9 @@ export default function Encounter() {
    const [isEditing, setIsEditing] = useState(false);
    const [headingText, setHeadingText] = useState("Transcript");
     const [isEditingTitle, setIsEditingTitle] = useState(false)
+     const [tabCounter, setTabCounter] = useState(1);
+       const [showAddDropdown, setShowAddDropdown] = useState(false);
+       const[mainFolder,setMainFolder]=useState(true)
   const [title, setTitle] = useState("Add patient details")
   const defaultTitle = "Add patient details"
 
@@ -46,7 +50,7 @@ export default function Encounter() {
   const sendIntervalRef = useRef(null);
   const animationFrameRef = useRef(null);
   const transcriptHistoryRef = useRef("");
-  const tabs = ["Transcript", "Note"];
+  // const tabs = ["Transcript", "Note"];
   const SEND_INTERVAL_MS = 300;
   const MIN_SAMPLES_TO_SEND = Math.floor(16000 * 0.1);
   const renderAudioLevelBars = (level) => {
@@ -75,6 +79,57 @@ export default function Encounter() {
    const handleTitleChange = (e) => {
     setTitle(e.target.value)
   }
+  
+      const [tabs, setTabs] = useState([
+    { id: "Context", label: "Context", icon: FileText, closable: false },
+    { id: "Transcript", label: "Transcript", icon: AudioWaveform, closable: false },
+    { id: "Note", label: "Note", icon: StickyNote, closable: false },
+  ]);
+
+
+  const handleAddOption = (option) => {
+    if (option === "Create a document") {
+      const newTabId = `document-${tabCounter}`;
+      const newTab = {
+        id: newTabId,
+        label: `Document ${tabCounter}`,
+        icon: FileText,
+        closable: true,
+        content: "document"
+      };
+      
+      setTabs([...tabs, newTab]);
+      setActiveTab(newTabId);
+      setTabCounter(tabCounter + 1);
+    } else if (option === "New smart dictation") {
+      const newTabId = `dictation-${tabCounter}`;
+      const newTab = {
+        id: newTabId,
+        label: `Dictation ${tabCounter}`,
+        icon: AudioWaveform,
+        closable: true,
+        content: "dictation"
+      };
+      
+      setTabs([...tabs, newTab]);
+      setActiveTab(newTabId);
+      setTabCounter(tabCounter + 1);
+    }
+    setShowAddDropdown(false);
+  };
+
+   const handleCloseTab = (tabId) => {
+    const updatedTabs = tabs.filter(tab => tab.id !== tabId);
+    setTabs(updatedTabs);
+    
+    // If the closed tab was active, switch to the first available tab
+    if (activeTab === tabId) {
+      setActiveTab(updatedTabs.length > 0 ? updatedTabs[0].id : "");
+    }
+  };
+
+
+
 
   const handleTitleBlur = () => {
     if (title.trim() === "") {
@@ -474,7 +529,7 @@ const resumeRecording = async () => {
   console.log("show",showFolder)
 
   return (
-    <div className="flex-1 bg-white min-h-screen">
+    <div className="flex-1 bg-[rgb(248,250,252)] min-h-screen">
        { !showFolder && (
          <div className="px-8 py-6 border-b border-gray-200">
           <h1 className="text-2xl font-aeonik text-gray-900 font-bold">
@@ -483,10 +538,11 @@ const resumeRecording = async () => {
         </div>
 
       )} 
+      
        <div>
-      {activeTab === "Transcript" && showMainFolder && (
+      { showMainFolder && (
         <div >
-        <div className="px-8 py-4 border-b border-gray-200">
+        <div className="px-8 pt-4 ">
           <div >
           <div>
             <div className="flex items-center  ">           
@@ -533,53 +589,12 @@ const resumeRecording = async () => {
      </button>         
      </div>
    </div>
-             {/* <div className="flex items-center  ">
-          <div className="flex items-center space-x-2 pl-[5px]">
-            <User className="w-8 h-8 text-gray-600" />
-            {isEditingTitle ? (
-              <input
-                type="text"
-                value={title}
-                onChange={handleTitleChange}
-                onBlur={handleTitleBlur}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    if (title.trim() === "") {
-                      setTitle(defaultTitle)
-                    }
-                    setIsEditingTitle(false)
-                  }
-                  if (e.key === "Escape") {
-                    setTitle(title || defaultTitle)
-                    setIsEditingTitle(false)
-                  }
-                }}
-                placeholder="Add patient details"
-                className="text-2xl font-aeonik  text-gray-700 bg-transparent border-none focus:outline-none min-w-0 w-[300px]"
-                autoFocus
-              />
-            ) : (
-              <p
-                className="text-2xl font-extrabold font-aeonik text-gray-700 cursor-pointer hover:text-gray-900 transition-colors"
-                onClick={() => setIsEditingTitle(true)}
-              >
-                {title || defaultTitle}
-              </p>
-            )}
-          </div>
-          <button className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors pt-[14px]">
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
-             */}
-            
-        
-        
+             
            
         
           <div className="flex justify-between pt-2">
             <div>
-          {activeTab === "Transcript" && showMainFolder && <DateTimeCalendar />}
+          {  showMainFolder && <DateTimeCalendar />}
           </div>
             <div>
           <MicrophoneRecorder isRecording={isRecording}/>
@@ -589,6 +604,80 @@ const resumeRecording = async () => {
       
         </div>
         </div>
+        </div>
+      )}
+
+           {showMainFolder &&  (
+        <div className="flex items-center  mb-6 pl-[33px]">
+          {tabs.map((tab) => {
+            const IconComponent = tab.icon;
+            return (
+              <div key={tab.id} className="flex items-center">
+                <button
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 ${
+                    activeTab === tab.id
+                      ? "text-blue-600 bg-blue-50 border-blue-600"
+                      : "text-gray-600 hover:text-gray-800 hover:bg-gray-50 border-transparent"
+                  }`}
+                >
+                  <IconComponent className="w-4 h-4" />
+                  {tab.label}
+                </button>
+                {tab.closable && (
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCloseTab(tab.id);
+                    }}
+                    className="ml-1 p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            );
+          })}
+          
+          {/* Add button with dropdown */}
+          <div className="relative ml-2">
+            <button
+              onClick={() => setShowAddDropdown(!showAddDropdown)}
+              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-md transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+
+            {showAddDropdown && (
+              <>
+                {/* Backdrop to close dropdown when clicking outside */}
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={() => setShowAddDropdown(false)}
+                />
+                
+                {/* Dropdown menu */}
+                <div className="absolute top-full right-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                  <div className="py-1">
+                    <button
+                      onClick={() => handleAddOption("Create a document")}
+                      className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <FileText className="w-4 h-4 text-gray-500" />
+                      Create a document
+                    </button>
+                    <button
+                      onClick={() => handleAddOption("New smart dictation")}
+                      className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <AudioWaveform className="w-4 h-4 text-gray-500" />
+                      New smart dictation
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -674,9 +763,14 @@ const resumeRecording = async () => {
         
       )} */}
       <div 
-        className={showMainFolder === "true" ? "bg-secondary" : "bg-white"}>
+        // className={showMainFolder === "true" ? "bg-secondary" : "bg-white"}
+        >
+
+      
+
+         
      
- <div className="px-8 border-b border-gray-200">
+ {/* <div className="px-8 ">
           <nav className="flex space-x-8">
             {tabs.map((tab) => (
               <button
@@ -696,8 +790,18 @@ const resumeRecording = async () => {
               </button>
             ))}
           </nav>
-        </div>
+        </div> */}
       </div>
+       {/* {activeTab === "transcript" && showMainFolder && (
+            <div className="p-6 pr-20">
+              <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
+                <div className="prose prose-gray max-w-none">
+                  <div className="whitespace-pre-wrap text-gray-800 leading-relaxed text-base min-h-[200px]">hello</div>
+                </div>
+              </div>
+            </div>
+          )}
+      */}
 
       {activeTab === "Transcript"  && !showMainFolder && (
         <div className="flex flex-col items-center justify-center px-8 py-16">
@@ -743,11 +847,11 @@ const resumeRecording = async () => {
             </div>
           )}
           <div className="w-full max-w-md mb-12">
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <span className="text-sm font-medium font-aeonik text-gray-600 uppercase tracking-wide">
                 SETTINGS
               </span>
-            </div>
+            </div> */}
 
             <div className="mb-6 flex items-center justify-between">
               <label className="text-sm font-aeonik font-medium text-gray-700">
@@ -816,36 +920,16 @@ const resumeRecording = async () => {
       )}
       {showMainFolder && activeTab==="Transcript" && (
         <div>
-          <div className="mt-8 w-full max-w-2xl p-8">
-            <label className="text-sm font-semibold text-gray-500  mb-2 block font-aeonik">
-              Patient context
-            </label>
-            {isRecording && transcriptHistory && (
-              <div className="mb-4 p-3rounded-md">
-                <label className="text-xs font-semibold text-blue-600 mb-1 block font-aeonik">
-                </label>
-                <div className="text-sm  font-aeonik">
-                  {transcriptHistory}
+             <div className="p-6 pr-20">
+              <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
+                <div className="prose prose-gray max-w-none">
+                  <div className="whitespace-pre-wrap text-gray-800 leading-relaxed text-base min-h-[200px]">hello</div>
                 </div>
               </div>
-            )}
-            {liveTranscript && !isRecording && (
-              <button
-                onClick={() => {
-                  const newText = liveTranscript.trim();
-                  if (newText) {
-                    setPatientContext(prev => {
-                      return prev ? `${prev}\n\n${newText}` : newText;
-                    });
-                  }
-                }}
-                className="mt-2 text-sm text-blue-600 hover:text-blue-800 font-medium font-aeonik"
-              >
-           
-              </button>
-            )}
-          </div>
-           {showMainFolder && activeTab === "Transcript" && (
+            </div>
+         
+        
+           {showMainFolder && (
         <div className="fixed bottom-[30px] ml-[10px] flex gap-[20px] right-0 pr-12">
           {!showButton ? (
             <>
@@ -902,6 +986,14 @@ const resumeRecording = async () => {
       )}         
         </div>
       )}
+
+      {activeTab === "Context" && (
+        <Contexttab/>
+       
+       
+ 
+)}
+
       {activeTab === "Note" && <Notestabs />}
     </div>
   );

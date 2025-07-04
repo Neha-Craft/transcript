@@ -190,7 +190,7 @@ export default function DateTimeCalendar() {
 
   return (
     <div className="flex">
-    <div className="relative max-w-md bg-white rounded-lg">
+    <div className="relative max-w-md  rounded-lg">
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={toggleCalendar}
