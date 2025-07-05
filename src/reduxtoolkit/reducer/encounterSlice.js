@@ -77,7 +77,7 @@ export const getAllEncounterApi = createAsyncThunk(
 
 // Initial state
 const initialState = {
-  idNumber: [],
+  idNumber: "",
   loading: false,
   error: null,
   responseData: null,
@@ -89,8 +89,10 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     TenantId(state, action) {
+      console.log("action",action.payload)
       state.idNumber = action.payload;
     }
+    
   },
   extraReducers: (builder) => {
     builder
