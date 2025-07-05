@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { ChevronDown, Mic, Settings, HelpCircle, Zap, Mail, Trash2 } from "lucide-react"
 import { FileText } from "lucide-react";
@@ -9,9 +9,12 @@ import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import PDFDocument from "@/component/pdfdocument";
 import MainButton from "./encounterButton";
 import DateEncounter from "./dateEncounter";
+import {postEncounterApi,getAllEncounterApi,TenantId} from "@/reduxtoolkit/reducer/encounterSlice"
+import { useSelector, useDispatch } from "react-redux";
 
 
 export default function Home() {
+  const dispatch = useDispatch()
   const [encounters, setEncounters] = useState([
     { date: "6/7/2025", items: [{ id: 1, status: "Not started", duration: 0 }] },
     {
@@ -24,22 +27,39 @@ export default function Home() {
       ],
     },
   ])
+
+  const [dateEncounter,setDateEncounter]=useState([])
+ 
   const [showPDF, setShowPDF] = useState(false)
 
   const [showStartDictate, setShowStartDictate] = useState(false)
-  const handleNewEncounter = () => {
-    const today = new Date().toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" })
-    const todayIndex = encounters.findIndex((group) => group.date === today)
-    if (todayIndex !== -1) {
-      const updatedEncounters = [...encounters]
-      const newId = Math.max(...updatedEncounters[todayIndex].items.map((item) => item.id), 0) + 1
-      updatedEncounters[todayIndex].items.push({ id: newId, status: "Not started", duration: 0 })
-      setEncounters(updatedEncounters)
-    } else {
-   
-      setEncounters([{ date: today, items: [{ id: 1, status: "Not started", duration: 0 }] }, ...encounters])
-    }
+
+ const handleDateEncounter = async () => {
+  try {
+    const response = await dispatch(getAllEncounterApi());
+    console.log("response", response.payload?.data); 
+     setDateEncounter(response.payload?.data)
+
+  } catch (error) {
+    console.error("Error in handleNewEncounter:", error);
   }
+};
+useEffect(()=>{
+  handleDateEncounter()
+
+},[])
+
+
+const handleAddMore =()=>{
+
+
+
+
+}
+
+
+
+
   const toggleDropdown = (e) => {
     e.stopPropagation()
     setShowStartDictate(!showStartDictate)
@@ -65,8 +85,8 @@ export default function Home() {
             Transcript
           </p>
       </div>
-      <MainButton/>
-      <DateEncounter encounters={encounters} isToday={isToday} formatDate={formatDate}/>
+      <MainButton handleNewEncounter={handleDateEncounter}/>
+      <DateEncounter encounters={dateEncounter} isToday={isToday} formatDate={formatDate} TenantId={TenantId}/>
      
       <div className="mt-auto border-t border-gray-200">
         <div className="p-2">

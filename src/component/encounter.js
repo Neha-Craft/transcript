@@ -917,17 +917,7 @@ const resumeRecording = async () => {
             </div>
          
         
-            
-        </div>
-      )}
-
-      {activeTab === "Context" && (
-        <Contexttab/>
-       
-       
- 
-)}
-     {showMainFolder && (
+           {showMainFolder && (
         <div className="fixed bottom-[30px] ml-[10px] flex gap-[20px] right-0 pr-12">
           {!showButton ? (
             <>
@@ -981,7 +971,16 @@ const resumeRecording = async () => {
             </div>
           )}
         </div>
-      )}   
+      )}         
+        </div>
+      )}
+
+      {activeTab === "Context" && (
+        <Contexttab/>
+       
+       
+ 
+)}
 
       {activeTab === "Note" && <Notestabs />}
     </div>
