@@ -847,11 +847,7 @@ const resumeRecording = async () => {
             </div>
           )}
           <div className="w-full max-w-md mb-12">
-            {/* <div className="mb-6">
-              <span className="text-sm font-medium font-aeonik text-gray-600 uppercase tracking-wide">
-                SETTINGS
-              </span>
-            </div> */}
+      
 
             <div className="mb-6 flex items-center justify-between">
               <label className="text-sm font-aeonik font-medium text-gray-700">
@@ -875,15 +871,7 @@ const resumeRecording = async () => {
           </svg>
         </div>
       </div>
-              {/* <select
-                value={encounterType}
-                onChange={(e) => setEncounterType(e.target.value)}
-                className="pl-3 font-aeonik pr-8 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="in-person font-aeonik">In-person</option>
-                <option value="virtual font-aeonik">Virtual</option>
-                <option value="phone font-aeonik">Phone</option>
-              </select> */}
+            
             </div>
 
             <div className="flex justify-between items-center">
@@ -929,7 +917,17 @@ const resumeRecording = async () => {
             </div>
          
         
-           {showMainFolder && (
+            
+        </div>
+      )}
+
+      {activeTab === "Context" && (
+        <Contexttab/>
+       
+       
+ 
+)}
+     {showMainFolder && (
         <div className="fixed bottom-[30px] ml-[10px] flex gap-[20px] right-0 pr-12">
           {!showButton ? (
             <>
@@ -983,16 +981,7 @@ const resumeRecording = async () => {
             </div>
           )}
         </div>
-      )}         
-        </div>
-      )}
-
-      {activeTab === "Context" && (
-        <Contexttab/>
-       
-       
- 
-)}
+      )}   
 
       {activeTab === "Note" && <Notestabs />}
     </div>
