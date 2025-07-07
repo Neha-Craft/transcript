@@ -13,6 +13,8 @@ const socket = io("https://whisper.craftandcode.in/", {
   withCredentials: true,
   path: "/socket.io/",
 })
+import {patchPatientDetails,NameChange,getAllInformationApi} from "@/reduxtoolkit/reducer/encounterSlice"
+import { useSelector, useDispatch } from "react-redux";
 export default function Encounter() {
   const [activeTab, setActiveTab] = useState("Transcript");
   const [encounterType, setEncounterType] = useState("in-person");
@@ -36,6 +38,8 @@ export default function Encounter() {
      const [tabCounter, setTabCounter] = useState(1);
        const [showAddDropdown, setShowAddDropdown] = useState(false);
        const[mainFolder,setMainFolder]=useState(true)
+       const [allDetails,setAllDetails]=useState({})
+         const uuid = useSelector((state) => state?.encounter?.idNumber)
   const [title, setTitle] = useState("Add patient details")
   const defaultTitle = "Add patient details"
 
@@ -50,7 +54,8 @@ export default function Encounter() {
   const sendIntervalRef = useRef(null);
   const animationFrameRef = useRef(null);
   const transcriptHistoryRef = useRef("");
-  // const tabs = ["Transcript", "Note"];
+  const dispatch = useDispatch()
+ 
   const SEND_INTERVAL_MS = 300;
   const MIN_SAMPLES_TO_SEND = Math.floor(16000 * 0.1);
   const renderAudioLevelBars = (level) => {
@@ -76,10 +81,34 @@ export default function Encounter() {
    const handleBlur = () => {
     setIsEditing(false);
   };
-   const handleTitleChange = (e) => {
-    setTitle(e.target.value)
+const handleTitleChange = (e) => {
+  setTitle(e.target.value);
+};
+
+const getAllDataInformation = async () => {
+   if (!uuid) return;
+
+  try {
+    const response = await dispatch(getAllInformationApi(uuid));
+  setAllDetails(response.payload)
+    console.log("response5", response.payload);
+  } catch (error) {
+    console.error("Error in getAllDataInformation:", error);
   }
-  
+};
+
+useEffect(()=>{
+  getAllDataInformation()
+
+},[])
+useEffect(() => {
+  if (allDetails?.title) {
+    setTitle(allDetails.title);
+  }
+}, [allDetails]);
+
+console.log("alldetails",allDetails?.title)
+
       const [tabs, setTabs] = useState([
     { id: "Context", label: "Context", icon: FileText, closable: false },
     { id: "Transcript", label: "Transcript", icon: AudioWaveform, closable: false },
@@ -131,12 +160,35 @@ export default function Encounter() {
 
 
 
-  const handleTitleBlur = () => {
-    if (title.trim() === "") {
-      setTitle(defaultTitle)
+const handleTitleBlur = async () => {
+  if (title.trim() === "") {
+    setTitle(defaultTitle);
+  } else {
+    try {
+      const response = await dispatch(patchPatientDetails({
+        id: uuid,
+        data: { title: title.trim() }
+      }));
+     
+      console.log("response", response?.payload);
+      const ab=response?.payload?.title || title
+      if(ab){
+           dispatch(NameChange(ab))
+
+      }
+     
+      setTitle(ab)
+
+     
+
+    } catch (error) {
+      console.error("Error updating title:", error);
     }
-    setIsEditingTitle(false)
   }
+  setIsEditingTitle(false);
+};
+
+console.log("title", title)
 
 
   const handleKeyDown = (e) => {
@@ -411,9 +463,7 @@ useEffect(() => {
 
 
 
-console.log("live",liveTranscript)
-console.log("trans",transcript)
-console.log("patieny",patientContext)
+
 const resumeRecording = async () => {
   console.log("🔄 Resume called - Current state:", { isRecording, isPaused });
   
@@ -530,7 +580,7 @@ const resumeRecording = async () => {
 
   return (
     <div className="flex-1 bg-[rgb(248,250,252)] min-h-screen">
-       { !showFolder && (
+       {/* { !showFolder && (
          <div className="px-8 py-6 border-b border-gray-200">
           <h1 className="text-2xl font-aeonik text-gray-900 font-bold">
             Encounter
@@ -538,7 +588,7 @@ const resumeRecording = async () => {
         </div>
 
       )} 
-      
+       */}
        <div>
       { showMainFolder && (
         <div >
@@ -556,19 +606,18 @@ const resumeRecording = async () => {
            type="text"                 
            value={title}                 
            onChange={handleTitleChange}                 
-           onBlur={handleTitleBlur}                 
-           onKeyDown={(e) => {                   
-             if (e.key === "Enter") {                     
-               if (title.trim() === "") {                       
-                 setTitle(defaultTitle)                     
-               }                     
-               setIsEditingTitle(false)                   
-             }                   
-             if (e.key === "Escape") {                     
-               setTitle(title || defaultTitle)                     
-               setIsEditingTitle(false)                   
-             }                 
-           }}                 
+           onBlur={handleTitleBlur}  
+           onKeyDown={(e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    handleTitleBlur(); // Submit title
+  } else if (e.key === "Escape") {
+    setTitle(defaultTitle);
+    setIsEditingTitle(false);
+  }
+}}
+               
+                        
            placeholder="Add patient details"                 
            className="text-[14px] font-aeonik  text-gray-700 bg-transparent border-none focus:outline-none min-w-0 w-[300px]"                 
            autoFocus               
@@ -812,7 +861,7 @@ const resumeRecording = async () => {
               <Mic className="w-10 h-10 text-white" />
             </div>
           </div>
-          {!showFolder && (
+          {/* {!showFolder && (
             <div className="w-full max-w-md mb-4">
               <div className="mb-4">
                 <span className="text-sm font-medium font-aeonik text-gray-600 uppercase tracking-wide">
@@ -827,7 +876,7 @@ const resumeRecording = async () => {
                 Add context
               </button>
             </div>
-          )}
+          )} */}
 
           {showFolder && (
             <div className="w-full max-w-md mb-8">

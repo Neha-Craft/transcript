@@ -10,7 +10,7 @@ import localFont from 'next/font/local'
 // })
 
 export const metadata = {
-  title: "Nabla - Medical Assistant",
+  title: "Premium Ai",
   description: "Medical assistant application",
 };
 

@@ -86,7 +86,9 @@ const handleAddMore =()=>{
           </p>
       </div>
       <MainButton handleNewEncounter={handleDateEncounter}/>
-      <DateEncounter encounters={dateEncounter} isToday={isToday} formatDate={formatDate} TenantId={TenantId}/>
+      <div className="flex-1 overflow-y-auto">
+      <DateEncounter encounters={dateEncounter} isToday={isToday} formatDate={formatDate}/>
+      </div>
      
       <div className="mt-auto border-t border-gray-200">
         <div className="p-2">
@@ -98,14 +100,7 @@ const handleAddMore =()=>{
   <p className="text-[14px] text-black font-bold font-aeonik">Settings</p>
 </Link>
 
-          {/* <Link
-            href="/settings"
-            className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md font-aeonik cursor-pointer"
-          >
-            <Settings className="w-4 h-4 font-aeonik" />
-            <p className="font-aeonik text-[14px] text-black font-[700]">Settings</p>
-           
-          </Link> */}
+         
           <button className="w-full flex items-center font-aeonik gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer">
             <HelpCircle className="w-4 h-4 text-black " />
            
